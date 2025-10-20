@@ -1,0 +1,169 @@
+/* Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f8fc;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 100px; /* space for navbar */
+}
+
+/* Navigation Bar */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 40px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    position: fixed;
+    top: 0;
+    z-index: 1000;
+}
+
+.navbar-logo {
+    color: #2b5cb8;        /* keep your text color */
+    text-decoration: none; /* remove underline */
+    font-weight: bold;
+    font-size: 24px;
+    cursor: pointer;       /* shows pointer on hover */
+    transition: color 0.3s ease;
+}
+
+.navbar-logo:hover {
+    color: #1f4690;        /* change color on hover */
+}
+
+
+/* Buttons in Navbar */
+.navbar-buttons a {
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 15px;
+    transition: 0.3s ease;
+    margin-left: 10px;
+}
+
+.join-group {
+    background-color: #28a745;
+    color: #fff;
+}
+
+.join-group:hover {
+    background-color: #1e7e34;
+}
+
+
+/* Main Container */
+.container {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.container2 {
+    background: white;
+    padding: 30px;
+    border-radius: 10px;
+    max-width: 1500px;
+    width: 90%;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h1 {
+    color: #333;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Room ID Section */
+.room-section {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.room-controls {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+input[type="text"] {
+    padding: 10px;
+    flex: 1;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+button {
+    padding: 10px 12px;
+    background-color: #2b5cb8;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+button:hover {
+    background-color: #1f4690;
+}
+
+/* Upload Button */
+.upload-btn {
+    margin-top: 20px;
+    width: 100%;
+}
+
+/* Footer */
+footer.footer {
+    text-align: center;
+    padding: 20px;
+    background-color: #0d1117; /* matches your preferred style */
+    color: #8b949e;
+    width: 100%;
+    margin-top: 40px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+}
+
+footer.footer a {
+    color: #2b5cb8;
+    text-decoration: none;
+}
+
+footer.footer a:hover {
+    text-decoration: underline;
+}
+
+
+
+
+/* Responsive */
+@media (max-width: 600px) {
+    .navbar-links, .navbar-buttons {
+        flex-direction: column;
+        gap: 10px;
+    }
+    .room-controls {
+        flex-direction: column;
+        align-items: stretch;
+    }
+}

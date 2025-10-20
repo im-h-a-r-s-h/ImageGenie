@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImageGenie - Search Yours</title>
+    <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+<div class="navbar">
+    <div class="navbar-logo">ImageGenie</div>
+</div>
+
+<div class="container">
+    <h1>Enter Room ID</h1>
+    <form id="roomForm">
+        <input type="text" id="roomIdInput" placeholder="Enter Room ID" required>
+        <button type="submit">Proceed</button>
+    </form>
+
+    <!-- Hidden Search Section (will show only after room ID is verified) -->
+<div id="searchSection" style="display:none; margin-top: 30px;">
+    <h1>Upload Your Image</h1>
+    <form action="/search" method="POST" enctype="multipart/form-data" id="imageInput">
+        <input type="hidden" name="roomId" id="hiddenRoomId">
+
+        <!-- Image Input -->
+        <input type="file" name="photo" id="photoInput" accept="image/*" required>
+
+        <!-- Preview Section -->
+        <div id="preview-container" style="margin-top:15px; display:flex; justify-content:center;">
+            <img id="preview-image" src="" 
+                style="display:none; max-width:200px; border-radius:10px; box-shadow:0px 0px 10px rgba(0,0,0,0.2);" 
+                alt="Image Preview">
+        </div>
+
+        <button type="submit" style="margin-top:20px;">Search</button>
+    </form>
+</div>
+
+    <p id="message" style="color:red; font-weight:bold; margin-top:10px;"></p>
+</div>
+
+<footer class="footer">
+  <p>&copy; 2024 ImageGenie</p>
+</footer>
+
+
+<script>
+document.getElementById('roomForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const roomId = document.getElementById('roomIdInput').value;
+
+    // Send request to backend to check if room exists
+    const response = await fetch('/check-room', {
+    method: 'POST',
+    headers: {
+        'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({ roomId })
+});
+
+
+    const data = await response.json();
+
+    if (data.exists) {
+        document.getElementById('message').textContent = "";
+        document.getElementById('searchSection').style.display = 'block';
+        document.getElementById('hiddenRoomId').value = roomId;
+    } else {
+        document.getElementById('message').textContent = "❌ Room ID not found. Please try again!";
+        document.getElementById('searchSection').style.display = 'none';
+    }
+});
+document.getElementById('photoInput').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    const previewImage = document.getElementById('preview-image');
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewImage.src = e.target.result;
+            previewImage.style.display = 'block';
+        };
+        reader.readAsDataURL(file);
+    } else {
+        previewImage.style.display = 'none';
+    }
+});
+
+</script>
+</body>
+</html>

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImageGenie - Upload Images</title>
+    <link rel="stylesheet" href="style3.css">
+</head>
+<body>
+<div class="navbar">
+    <a href="index.html" class="navbar-logo">ImageGenie</a>
+        <div class="navbar-buttons">
+            <a href="join-group.html" class="join-group">Join a Group</a>
+        </div>
+</div>
+
+<div class="container">
+    <h1>Upload Images</h1>
+
+    <form id="uploadForm" enctype="multipart/form-data">
+        <!-- Room ID Section -->
+        <div class="room-section">
+            <label for="roomId"><strong>Room ID:</strong></label>
+            <div class="room-controls">
+                <input type="text" name="roomId" id="roomId" placeholder="Click 'Generate' or enter manually" required readonly>
+                <button type="button" id="generateBtn">Generate</button>
+                <button type="button" id="copyBtn">Copy</button>
+            </div>
+            <p class="small-text">This ID will be used to search your photos later.</p>
+        </div>
+
+        <!-- Upload Photos -->
+        <label for="photos"><strong>Select Photos:</strong></label>
+        <input type="file" name="photos" id="photos" multiple required>
+
+        <button type="submit" class="upload-btn">Upload & Cluster</button>
+    </form>
+
+    <p id="statusMessage" style="margin-top:20px; color:green;"></p>
+</div>
+
+<footer class="footer">
+  <p>&copy; 2024 ImageGenie</p>
+</footer>
+
+<script>
+    // Generate Room ID
+    document.getElementById("generateBtn").addEventListener("click", () => {
+        const id = Math.floor(100000 + Math.random() * 900000);
+        document.getElementById("roomId").value = id;
+    });
+
+    // Copy Room ID
+    document.getElementById("copyBtn").addEventListener("click", () => {
+        const roomInput = document.getElementById("roomId");
+        roomInput.select();
+        navigator.clipboard.writeText(roomInput.value);
+        alert("Room ID copied: " + roomInput.value);
+    });
+
+    // Handle form submission with fetch
+    document.getElementById("uploadForm").addEventListener("submit", async (e) => {
+        e.preventDefault(); // prevent page reload
+
+        const form = document.getElementById("uploadForm");
+        const formData = new FormData(form);
+
+        try {
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (response.ok) {
+                document.getElementById("statusMessage").innerText = "✅ Upload & Clustering Successful!";
+                form.reset(); // reset form fields
+                document.getElementById("roomId").value = "";
+            } else {
+                const text = await response.text();
+                document.getElementById("statusMessage").innerText = "❌ Error: " + text;
+                document.getElementById("statusMessage").style.color = "red";
+            }
+        } catch (err) {
+            document.getElementById("statusMessage").innerText = "❌ Network Error!";
+            document.getElementById("statusMessage").style.color = "red";
+            console.error(err);
+        }
+    });
+</script>
+</body>
+</html>
