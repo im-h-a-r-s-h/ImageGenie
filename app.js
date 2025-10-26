@@ -13,11 +13,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 
-let roomIds = new Set(["514409"]);
+let roomIds = new Set(["799316"]);
 
 // Ensure upload folder exists
 const uploadDir = path.join(__dirname, 'uploads/all_photos');
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true });
+
+const searchDir = path.join(__dirname, 'uploads/search_photo');
+if (!fs.existsSync(searchDir)) fs.mkdirSync(searchDir, { recursive: true });
+
 
 // Multer setup
 const storage = multer.diskStorage({
@@ -29,6 +33,19 @@ const storage = multer.diskStorage({
   },
 });
 const upload = multer({ storage: storage });
+
+
+const searchStorage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, searchDir);
+  },
+  filename: function (req, file, cb) {
+    cb(null, `search-${Date.now()}${path.extname(file.originalname)}`);
+  },
+});
+const uploadSearch = multer({ storage: searchStorage });
+
+
 
 // Routes
 app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.html')));
@@ -76,7 +93,7 @@ app.get('/download/:roomId/:cluster', (req, res) => {
 });
 
 
-app.post('/search', upload.single('photo'), (req, res) => {
+app.post('/search', uploadSearch.single('photo'), (req, res) => {
   const roomId = req.body.roomId;
   if (!roomId) return res.status(400).send('Room ID is required for search!');
   if (!roomIds.has(roomId)) return res.status(404).send('Invalid Room ID!');
@@ -163,7 +180,6 @@ app.get('/download/:roomId/:cluster', (req, res) => {
 
 
 
-
 app.post('/check-room', (req, res) => {
   const roomId = req.body.roomId; // ✅ safer than destructuring
   console.log("CHECK ROOM REQ:", req.body);
@@ -176,7 +192,4 @@ app.post('/check-room', (req, res) => {
 });
 
 
-
 app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));
-
-
