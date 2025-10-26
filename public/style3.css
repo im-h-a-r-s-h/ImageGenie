@@ -111,6 +111,25 @@ input[type="text"] {
     border-radius: 5px;
 }
 
+#loader {
+    display: none;
+    margin-top: 20px;
+     align-items:center;
+}
+
+#loader img{
+    width: 80px;
+    height: 80px;
+    margin-right: 10px;
+}
+
+#loader p{
+    color:green;
+    margin:0;
+    font-weight: bold;
+}
+
+
 button {
     padding: 10px 12px;
     background-color: #2b5cb8;

@@ -12,8 +12,7 @@ app.use('/clusters', express.static(path.join(__dirname, 'clusters')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
-let roomIds = new Set(["799316"]);
+let roomIds = new Set(["777795"]);
 
 // Ensure upload folder exists
 const uploadDir = path.join(__dirname, 'uploads/all_photos');
@@ -190,6 +189,5 @@ app.post('/check-room', (req, res) => {
       res.json({ exists: false });
   }
 });
-
 
 app.listen(PORT, () => console.log(`🚀 Server running at http://localhost:${PORT}`));

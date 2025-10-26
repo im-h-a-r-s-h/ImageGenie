@@ -60,6 +60,7 @@ if mode != 'search':
     face_embeddings = []
     image_face_map = []
 
+    # Step 1: Extract faces and embeddings from all images
     for filename in os.listdir(all_photos_path):
         path = os.path.join(all_photos_path, filename)
         faces = extract_face(path)
@@ -79,6 +80,8 @@ if mode != 'search':
     clt.fit(face_embeddings)
     labels = clt.labels_
 
+
+    cluster_embeddings = {}  # to store embeddings per cluster
     for idx, label in enumerate(labels):
         folder = os.path.join(room_cluster_path, f'cluster_{label}')
         os.makedirs(folder, exist_ok=True)
@@ -86,6 +89,18 @@ if mode != 'search':
         src_path = os.path.join(all_photos_path, original_name)
         dst_path = os.path.join(folder, original_name)
         shutil.copy(src_path, dst_path)
+
+        # Store embeddings for centroid calculation
+        if label not in cluster_embeddings:
+            cluster_embeddings[label] = []
+        cluster_embeddings[label].append(face_embeddings[idx])
+
+    # Step 4: Compute centroid of each cluster and save as .npy
+    for label, embeddings in cluster_embeddings.items():
+        centroid = np.mean(embeddings, axis=0)
+        centroid_path = os.path.join(room_cluster_path, f'cluster_{label}', 'centroid.npy')
+        np.save(centroid_path, centroid)
+        print(f"[INFO] Saved centroid for cluster_{label} at {centroid_path}")
 
     print(f"[SUCCESS] Clustering complete. Check clusters/{roomId}/ folder.")
 
@@ -123,17 +138,26 @@ elif mode == 'search':
     cluster_centers = []
     cluster_names = []
 
+    # previous method of calculating cluster centers by recomputing mean for each cluster folder
+    # for folder in cluster_dirs:
+    #     folder_path = os.path.join(cluster_path, folder)
+    #     embeddings = []
+    #     for img_name in os.listdir(folder_path):
+    #         img_path = os.path.join(folder_path, img_name)
+    #         face_list = extract_face(img_path)
+    #         if face_list:
+    #             embeddings.append(face_list[0]["encoding"])
+    #     if embeddings:
+    #         cluster_mean = np.mean(embeddings, axis=0)
+    #         cluster_centers.append(cluster_mean)
+    #         cluster_names.append(folder)
+
+    # Step 2: Load precomputed centroids for each cluster
     for folder in cluster_dirs:
-        folder_path = os.path.join(cluster_path, folder)
-        embeddings = []
-        for img_name in os.listdir(folder_path):
-            img_path = os.path.join(folder_path, img_name)
-            face_list = extract_face(img_path)
-            if face_list:
-                embeddings.append(face_list[0]["encoding"])
-        if embeddings:
-            cluster_mean = np.mean(embeddings, axis=0)
-            cluster_centers.append(cluster_mean)
+        centroid_file = os.path.join(cluster_path, folder, 'centroid.npy')
+        if os.path.exists(centroid_file):
+            centroid = np.load(centroid_file)
+            cluster_centers.append(centroid)
             cluster_names.append(folder)
 
     if not cluster_centers:
@@ -147,11 +171,15 @@ elif mode == 'search':
 
     result = {
         "cluster": match_folder,
-        "images": os.listdir(match_folder_path)
+        "images": [f for f in os.listdir(match_folder_path) if f.lower().endswith(('.jpg', '.jpeg', '.png', '.webp'))]
+
     }
     print(json.dumps(result))  # ✅ Only JSON output
 
-
+    # Delete all photos in search to get ready for next search
+    for f in os.listdir(search_photo_path):
+        os.remove(os.path.join(search_photo_path, f))
+    print("[INFO] uploads/search_photo cleared.", file=sys.stderr)
 
 else:
     print("[ERROR] Invalid mode. Use 'cluster' or 'search'.")

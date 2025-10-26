@@ -29,7 +29,7 @@ Thumbs.db
 uploads/all_photos/
 uploads/search_photo/
 clusters/
-all_images/
+Test_photos/
 # IDE settings (VSCode, PyCharm)
 .vscode/
 .idea/
